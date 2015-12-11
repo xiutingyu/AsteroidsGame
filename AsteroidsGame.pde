@@ -1,11 +1,16 @@
 SpaceShip bob;
 Star [] sue;
-Asteroid ann;
+ArrayList <Asteroid> ann;
+ArrayList <Bullet> bull=new ArrayList<Bullet>(1);
 //your variable declarations here
 public void setup() 
+{ 
+  size (600,600); 
+ ann=new ArrayList <Asteroid>(30);
+  for (int nI=0; nI<30;nI++)
 {
-   size (600,600); 
-  ann=new Asteroid();
+  ann.add(new Asteroid()); 
+}
   bob = new SpaceShip();
  
   
@@ -13,7 +18,14 @@ public void setup()
   for (int i=0;i<60; i++)
   {
      sue[i] = new Star(); 
-  }//your code here
+  }
+
+  for (int nI=0; nI<bull.size(); nI++)
+  {
+    bull.show();
+    //bull.move();
+  }
+    //your code here
 }
 
 public void draw() 
@@ -25,13 +37,23 @@ public void draw()
   }
   bob.show();
   bob.move();
-  ann.show();
-  ann.move();
-  //your code here
+  for (int i=0; i<ann.size(); i++)
+  {
+    ann.get(i).move();
+    ann.get(i).show();
+    //System.out.println(ann.get(i).getX() + ", " + ann.get(i).getY());
+  if (dist(bob.getX(),bob.getY(), ann.get(i).getX(), ann.get(i).getY())<20)
+  {
+    ann.remove(i);
+  }
+   if (dist(bull.getX(),bull.getY(), ann.get(i).getX(), ann.get(i).getY())<20)
+    {
+        bull.remove(i);
+    }
 }
+}//your code here
 
 public void keyPressed ()
-
 {
   if (keyCode == LEFT)
     bob.rotate(-5);
@@ -49,6 +71,8 @@ public void keyPressed ()
     bob.setDirectionY(0);
     bob.setPointDirection(((int)(Math.random()*595)));
   }
+  if (key==' ')
+    bull.add(new Bullet(bob));
 }
 
 class Star {
@@ -97,11 +121,28 @@ class SpaceShip extends Floater
       public void setPointDirection(int degrees) {myPointDirection=degrees;}  
       public double getPointDirection() {return myPointDirection;} //your code here
 }
+class Bullet extends Floater
+{
+  public Bullet(Spaceship theShip)
+  {
+    myCenterX=theShip.getX();
+    myCenterY=theShip.getY();
+    myPointDirection=theShip.getPointDirection();
+    double dRadians = myPointDirection*(Math.PI/180);
+    myDirectionX=5*Math.cos(Radians)+ theShip.getDirectionX();
+    myDirectionY=5*Math.sin(dRadians)+theShip.getDirectionY();
+  }
+  public void show()
+  {
+    ellipse(myCenterX,myCenterY,10,10);
+  }
+}
 class Asteroid extends Floater
 {
       private int rotSpeed;
       public Asteroid()
       {
+      fill(0,0,197);
       rotSpeed=((int)(Math.random()*2));
       corners=8;
       xCorners = new int [corners];
@@ -123,8 +164,8 @@ class Asteroid extends Floater
       xCorners[7]=-4;
       yCorners[7]=4;
       myColor = color (255);
-      myCenterX=300;
-      myCenterY=300;
+      myCenterX=((int)(Math.random()*580));
+      myCenterY=((int)(Math.random()*580));
       myDirectionX=((int)(Math.random()*5)-2);
       myDirectionY=((int)(Math.random()*5)-2);
       myPointDirection=0;
